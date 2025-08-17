@@ -10,8 +10,9 @@ router.get('/ping', async () => {
 })
 router.get('/users', [UserController, 'index'])
 router.post('/user', [UserController, 'cadastrar'])
-router.post('/login', [UserController, 'login'])   
+router.post('/login', [UserController, 'login'])
 router.delete('/user/:id', [UserController, 'delete'])
+router.post('/user/token', [UserController, 'findUserByToken'])
 router.get('/user/:id', [UserController, 'show']);
 router.put('/user/:id',  [UserController, 'update']);
-
+router.get('/user/refresh', [UserController, 'refreshData'])

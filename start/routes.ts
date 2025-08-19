@@ -11,7 +11,9 @@ router.get('/ping', async () => {
 router.get('/users', [UserController, 'index'])
 router.post('/user', [UserController, 'cadastrar'])
 router.post('/login', [UserController, 'login'])
+router.post('/session', [UserController, 'store'])
 router.delete('/user/:id', [UserController, 'delete'])
+router.delete('/destroy', [UserController, 'destroy'])
 router.post('/user/token', [UserController, 'findUserByToken'])
 router.get('/user/:id', [UserController, 'show']);
 router.put('/user/:id',  [UserController, 'update']);

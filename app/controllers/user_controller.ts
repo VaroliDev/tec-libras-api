@@ -35,9 +35,8 @@ export default class UserController {
     if (!isPasswordValid) {
       return response.abort('Dados Invalidos')
     }
-    const token = await User.accessTokens.create(user)
+    
     return {
-      token: token.toJSON(),
       user: {
         id: user.id,
         user_name: user.user_name,
@@ -45,6 +44,18 @@ export default class UserController {
       },
     }
   }
+
+  async store({ request, auth, response }: HttpContext) {
+    const { email, password } = request.only(['email', 'password'])
+    const user = await User.verifyCredentials(email, password)
+
+    return await auth.use('api').createToken(user)
+  }
+
+  async destroy({ request, auth, response }: HttpContext) {
+    await auth.use('api').invalidateToken()
+  }
+
 
   public async findUserByToken({ request, response }: HttpContext) {
     const { token } = request.only(['token'])

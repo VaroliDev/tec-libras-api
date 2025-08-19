@@ -21,7 +21,7 @@ export default class UserController {
     return response.created({ user, token, password })
     }
 
-    public async login({ request, response }: HttpContext) {
+    public async login({ request, response, auth }: HttpContext) {
     const { user_name, password } = request.only(['user_name', 'password'])
     /*Encontrar o usuario pelo user. Retornar erro
        se o usuario nao existir.
@@ -43,17 +43,6 @@ export default class UserController {
         fullName: user.full_name,
       },
     }
-  }
-
-  async store({ request, auth, response }: HttpContext) {
-    const { email, password } = request.only(['email', 'password'])
-    const user = await User.verifyCredentials(email, password)
-
-    return await auth.use('api').createToken(user)
-  }
-
-  async destroy({ request, auth, response }: HttpContext) {
-    await auth.use('api').invalidateToken()
   }
 
 

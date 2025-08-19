@@ -1,5 +1,4 @@
 import type { HttpContext } from '@adonisjs/core/http';
-import db from '@adonisjs/lucid/services/db'
 import hash from '@adonisjs/core/services/hash';
 import User from '#models/user';
 
@@ -19,75 +18,26 @@ export default class UserController {
     const password = await hash.make('password')
     const token = await User.accessTokens.create(user)
     return response.created({ user, token, password })
+
     }
 
-    public async login({ request, response, auth }: HttpContext) {
-    const { user_name, password } = request.only(['user_name', 'password'])
-    /*Encontrar o usuario pelo user. Retornar erro
-       se o usuario nao existir.
-    */
-    const user = await User.findBy('user_name', user_name)
-    if (!user) {
-      return response.abort('Dados Invalidos')
-    }
+    public async login({ request, response }: HttpContext) {
+        const { user_name, password } = request.only(['user_name', 'password'])
+        /*Encontrar o usuario pelo user. Retornar erro
+            se o usuario nao existir.
+        */
+        const user = await User.findBy('user_name', user_name)
+        if (!user) {
+          return response.abort('Dados Invalidos')
+        }
     /*Verificar a senha usando o serviço hash*/
     const isPasswordValid = await hash.verify(user.password, password)
     if (!isPasswordValid) {
       return response.abort('Dados Invalidos')
     }
-    
+    const token = await User.accessTokens.create(user)
     return {
-      user: {
-        id: user.id,
-        user_name: user.user_name,
-        fullName: user.full_name,
-      },
-    }
-  }
-
-
-  public async findUserByToken({ request, response }: HttpContext) {
-    const { token } = request.only(['token'])
-
-    if (!token) {
-      return response.status(400).send({ message: 'Token é obrigatório' })
-    }
-
-    const accessToken = await db
-      .from('auth_access_tokens')
-      .where('hash', token)
-      .first()
-
-    if (!accessToken) {
-      return response.status(404).send({ message: 'Token não encontrado' })
-    }
-
-    const user = await User.find(accessToken.user_id)
-
-    if (!user) {
-      return response.status(404).send({ message: 'Usuário não encontrado' })
-    }
-
-    return response.send({
-      user: {
-        id: user.id,
-        user_name: user.user_name,
-        fullName: user.full_name,
-      }
-    })
-  }
-
-  public async refreshData({request, response}: HttpContext) {
-    const { token, user_name } = request.only(['token', 'user_name'])
-    const accessToken = await User.accessTokens.verify(token)
-    if (!accessToken) {
-      return response.abort('Token inválido')
-    }
-    const user = await User.findBy('user_name', user_name)
-    if (!user) {
-      return response.abort('Usuário não encontrado')
-    }
-    return {
+      token: token.toJSON(),
       user: {
         id: user.id,
         user_name: user.user_name,
@@ -100,6 +50,19 @@ export default class UserController {
     const users = await User.all()
     return users
 }
+
+  public async checkToken({ auth, response }: HttpContext) {
+    try {
+      await auth.authenticate()
+      const user = auth.user!
+
+      const userDb = await User.find(user.id)
+
+      return { user: userDb }
+    } catch {
+      return response.unauthorized({ message: 'Token inválido ou expirado' })
+    }
+  }
 
 async update({ request, response }: HttpContext) {
 const user = await User.find(request.param('id'))
@@ -135,4 +98,5 @@ async show({ request, response }: HttpContext) {
 
     return user;  // Retorna os dados do usuário
 }
+
 }

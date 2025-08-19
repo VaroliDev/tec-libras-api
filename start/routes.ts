@@ -17,3 +17,4 @@ router.get('/user/:id', [UserController, 'show']);
 router.put('/user/:id',  [UserController, 'update']);
 
 router.post('/tokenLogin', [AuthController, 'login'])
+router.post('/renewData', [AuthController, 'renewData'])

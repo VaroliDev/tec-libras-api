@@ -1,4 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import { nanoid } from 'nanoid'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
@@ -11,30 +12,66 @@ export default class AuthController {
     }
 
     try {
-  const user = await User.findBy('user_name', user_name)
-  if (!user) return response.unauthorized({ message: 'Usuário não encontrado' })
+      const user = await User.findBy('user_name', user_name)
+      if (!user) {
+        return response.unauthorized({ message: 'Usuário não encontrado' })
+      }
+      console.log(user);
+      
+      // Verifica se a senha está correta
+      const isPasswordValid = await hash.verify(user.password, password)
+      if (!isPasswordValid) {
+        return response.unauthorized({ message: 'Credenciais inválidas' })
+      }
+      console.log('Senha:', isPasswordValid);
 
-  if (!user.password) return response.unauthorized({ message: 'Senha inválida' })
+      // Verifica se já existe token
+      const existingToken = await db.from('auth_access_tokens')
+        .where('tokenable_id', user.id)
+        .first()
+        console.log('Token existente:', existingToken);
 
-  const isPasswordValid = await hash.verify(user.password, password)
-  if (!isPasswordValid) return response.unauthorized({ message: 'Senha incorreta' })
+      if (existingToken) {
+        const newToken = nanoid(64)
 
-  if (!user.id) return response.unauthorized({ message: 'ID do usuário inválido' })
+        await db.from('auth_access_tokens')
+          .where('id', existingToken.id)
+          .update({ hash: newToken })
 
-  let tokenString
-  try {
-    const token = await auth.use('api').createToken(user)
-    tokenString = token.toJSON().token
-  } catch (err) {
-    console.error('Erro ao criar token:', err)
-    return response.internalServerError({ message: 'Erro ao gerar token' })
+        return { token: newToken, user: user, message: 'Token atualizado com sucesso' }
+      }
+
+      const token = await auth.use('api').createToken(user)
+      const tokenString = token.toJSON().token
+      return { token: tokenString, user }
+
+    } catch (err) {
+      console.error('Erro no login:', err)
+      return response.unauthorized({ message: 'Credenciais inválidas' })
+    }
   }
 
-  return { user, token: tokenString }
+  public async renewData({ request, response }: HttpContext){
+    const { token } = request.only(['token']);
+    console.log(token)
+    if(!token){
+      return {message: 'Token Invalido',token};
+    }
 
-} catch (err) {
-  console.error('Erro geral no login:', err)
-  return response.unauthorized({ message: 'Credenciais inválidas' })
-}
+    const user = await db.from('auth_access_tokens').where('hash', token).first();
+    console.log(user)
+    if(!user){
+      return response.badRequest({message: 'Token não encontrado',user})
+    }
+
+    const userData = await db.from('users').where('user_id', user.tokenable_id).first()
+    console.log(userData)
+    if(!userData){
+      return response.badRequest({message: 'Usuario nao encontrado',userData})
+    }
+
+    return{
+      message: 'Usuario achado'
+    }
   }
 }

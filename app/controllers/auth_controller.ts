@@ -33,7 +33,7 @@ export default class AuthController {
     }
 
   public async login({ request, auth, response }: HttpContext) {
-    const { user_name, password } = request.only(['user_name', 'password'])
+    const { user_name, password, isGoogleLogin } = request.only(['user_name', 'password', 'isGoogleLogin'])
     if (!user_name || !password) {
       return response.badRequest({ message: 'Usuário e senha são obrigatórios' })
     }
@@ -46,9 +46,16 @@ export default class AuthController {
       console.log(user)
       
       // Verifica se a senha está correta
-      const isPasswordValid = await hash.verify(user.password, password)
-      if (!isPasswordValid) {
-        return response.unauthorized({ message: 'Credenciais inválidas' })
+      if (!isGoogleLogin) {
+        if (!password) {
+          return response.badRequest({ message: 'Senha é obrigatória para login normal' });
+        }
+
+        // só verifica a senha se NÃO for login Google
+        const isPasswordValid = await hash.verify(user.password, password);
+        if (!isPasswordValid) {
+          return response.unauthorized({ message: 'Credenciais inválidas' });
+        }
       }
 
       // Verifica se já existe token
@@ -78,7 +85,7 @@ export default class AuthController {
           id: user.id,
           user_name: user.user_name,
           fullName: user.full_name,
-            oken: tokenString
+          token: tokenString
         } 
       }
 
@@ -140,21 +147,16 @@ export default class AuthController {
     return response.status(200).send({ message: 'Usuário deletado com sucesso' })
   }
 
-  public async doesExists({request, response}: HttpContext) {
-      const user_name = request.only([ 'user_name' ])
-      if (user_name) {
-        return response.status(400).send({ message: 'O nome de usuário é obrigatório' });
-      }
+  public async doesExists({ request, response }: HttpContext) {
+    const { user_name } = request.only(['user_name']);
 
-      const doesExist = await db.from('users').where('user_name', user_name).first()
-      console.log(doesExist)
-
-      if(doesExist){
-        console.log('Ta caindo na bola3')
-        return true
-      }
-
-      console.log('Nao t12a') 
-      return false
+    if (!user_name) {
+      return response.status(400).send({ message: 'O nome de usuário é obrigatório' });
     }
+
+    const doesExist = await db.from('users').where('user_name', user_name).first();
+    console.log('Resultado query:', doesExist);
+
+    return response.ok({ exists: !!doesExist });
+  }
 }

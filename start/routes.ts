@@ -9,12 +9,13 @@ router.get('/', async () => {
 router.get('/ping', async () => {
   return { message: 'API está funcionando!' }
 })
-router.get('/users', [UserController, 'index'])
-router.post('/user', [UserController, 'cadastrar'])
-router.post('/login', [UserController, 'login'])
-router.delete('/user/:id', [UserController, 'delete'])
-router.get('/user/:id', [UserController, 'show']);
-router.put('/user/:id',  [UserController, 'update']);
-
-router.post('/tokenLogin', [AuthController, 'login'])
+//auth_controller routes
+router.post('/user', [AuthController, 'cadastrar'])
+router.post('/login', [AuthController, 'login'])
+router.put('/user/:id',  [AuthController, 'update']);
+router.delete('/user/:id', [AuthController, 'delete'])
 router.post('/renewData', [AuthController, 'renewData'])
+
+//user_controller routes
+router.get('/users', [UserController, 'index'])
+router.get('/user/:id', [UserController, 'show']);

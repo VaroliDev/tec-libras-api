@@ -6,19 +6,29 @@ import hash from '@adonisjs/core/services/hash'
 
 export default class AuthController {
   public async cadastrar({request, response}: HttpContext) {
-        const data = request.only(['full_name', 'user_name', 'password', 'email'])
-        if (!data.user_name) {
-          return response.status(400).send({ message: 'O nome de usuário é obrigatório' });
-        }
-        if (!data.password) {
-          return response.status(400).send({ message: 'A senha é obrigatória' });
-        }
-        if (!data.email) {
-          return response.status(400).send({ message: 'O email é obrigatório' });
-        }
+      const data = request.only(['full_name', 'user_name', 'password', 'email'])
+      if (!data.user_name) {
+        return response.status(400).send({ message: 'O nome de usuário é obrigatório' });
+      }
+      if (!data.password) {
+        return response.status(400).send({ message: 'A senha é obrigatória' });
+      }
+      if (!data.email) {
+        return response.status(400).send({ message: 'O email é obrigatório' });
+      }
+
+      const doesExist = await db.from('users').where('user_name', data.user_name).first()
+      console.log(doesExist)
       const user = await User.create(data)
       const password = await hash.make('password')
       const token = await User.accessTokens.create(user)
+      if(doesExist){
+        console.log('Ta caindo na bola')
+        return ({ user, token, password })
+      }
+      console.log('Nao ta')
+
+      
       return response.created({ user, token, password })
     }
 
@@ -33,6 +43,7 @@ export default class AuthController {
       if (!user) {
         return response.unauthorized({ message: 'Usuário não encontrado' })
       }
+      console.log(user)
       
       // Verifica se a senha está correta
       const isPasswordValid = await hash.verify(user.password, password)
@@ -47,7 +58,7 @@ export default class AuthController {
 
         await db.from('auth_access_tokens')
           .where('id', existingToken.id)
-          .update({ hash: newToken })
+           .update({ hash: newToken })
 
         return { 
           user: {
@@ -128,4 +139,22 @@ export default class AuthController {
     await user.delete()
     return response.status(200).send({ message: 'Usuário deletado com sucesso' })
   }
+
+  public async doesExists({request, response}: HttpContext) {
+      const user_name = request.only([ 'user_name' ])
+      if (user_name) {
+        return response.status(400).send({ message: 'O nome de usuário é obrigatório' });
+      }
+
+      const doesExist = await db.from('users').where('user_name', user_name).first()
+      console.log(doesExist)
+
+      if(doesExist){
+        console.log('Ta caindo na bola3')
+        return true
+      }
+
+      console.log('Nao t12a') 
+      return false
+    }
 }

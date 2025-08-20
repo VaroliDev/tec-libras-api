@@ -15,6 +15,7 @@ router.post('/login', [AuthController, 'login'])
 router.put('/user/:id',  [AuthController, 'update']);
 router.delete('/user/:id', [AuthController, 'delete'])
 router.post('/renewData', [AuthController, 'renewData'])
+router.post('/doesExists', [AuthController, 'doesExists'])
 
 //user_controller routes
 router.get('/users', [UserController, 'index'])

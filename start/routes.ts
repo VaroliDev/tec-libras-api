@@ -1,6 +1,7 @@
 import router from '@adonisjs/core/services/router'
 
 const UserController = () => import('#controllers/user_controller')
+const AuthController = () => import('#controllers/auth_controller')
 
 router.get('/', async () => {
   return { hello: 'world' }
@@ -8,10 +9,13 @@ router.get('/', async () => {
 router.get('/ping', async () => {
   return { message: 'API está funcionando!' }
 })
-router.get('/users', [UserController, 'index'])
-router.post('/user', [UserController, 'cadastrar'])
-router.post('/login', [UserController, 'login'])   
-router.delete('/user/:id', [UserController, 'delete'])
-router.get('/user/:id', [UserController, 'show']);
-router.put('/user/:id',  [UserController, 'update']);
+//auth_controller routes
+router.post('/user', [AuthController, 'cadastrar'])
+router.post('/login', [AuthController, 'login'])
+router.put('/user/:id',  [AuthController, 'update']);
+router.delete('/user/:id', [AuthController, 'delete'])
+router.post('/renewData', [AuthController, 'renewData'])
 
+//user_controller routes
+router.get('/users', [UserController, 'index'])
+router.get('/user/:id', [UserController, 'show']);

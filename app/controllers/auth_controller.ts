@@ -39,11 +39,15 @@ export default class AuthController {
     }
 
     try {
-      const user = await User.findBy('user_name', user_name)
+      let user;
+      if(user_name.includes('@')){
+        user = await User.findBy('email', user_name)
+      } else {
+        user = await User.findBy('user_name', user_name)
+      }
       if (!user) {
         return response.unauthorized({ message: 'Usuário não encontrado' })
       }
-      console.log(user)
       
       // Verifica se a senha está correta
       if (!isGoogleLogin) {

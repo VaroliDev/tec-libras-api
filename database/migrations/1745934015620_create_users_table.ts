@@ -9,9 +9,13 @@ export default class extends BaseSchema {
       table.string('full_name').nullable()
       table.string('user_name').notNullable().unique()
       table.string('email', 254).notNullable().unique()
+
       table.string('password').notNullable()
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
+
+      table.string('role').notNullable().defaultTo('default') //tipo de usuario usuario comum ou amd
+
     })
   }
 

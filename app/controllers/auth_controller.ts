@@ -34,7 +34,7 @@ export default class AuthController {
 
   public async login({ request, auth, response }: HttpContext) {
     const { user_name, password, isGoogleLogin } = request.only(['user_name', 'password', 'isGoogleLogin'])
-    if (!user_name || !password) {
+    if (!user_name) {
       return response.badRequest({ message: 'Usuário e senha são obrigatórios' })
     }
 

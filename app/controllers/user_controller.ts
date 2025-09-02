@@ -17,4 +17,17 @@ export default class UserController {
 
       return user;  // Retorna os dados do usuário
   }
+
+  async getRole({ request, response }: HttpContext) {
+    const user = request.param('id');
+    if (!user) {
+      return response.status(400).send({ message: 'ID do usuário é obrigatório' });
+    }
+
+    const userData = await User.find(user);
+    if (!userData) {
+      return response.status(404).send({ message: 'Usuário não encontrado' });
+    }
+    return { role: userData.role };
+  }
 }

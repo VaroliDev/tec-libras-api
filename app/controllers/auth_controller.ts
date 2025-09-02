@@ -38,6 +38,12 @@ export default class AuthController {
       return response.badRequest({ message: 'Usuário e senha são obrigatórios' })
     }
 
+    if(!isGoogleLogin){
+      if (!password) {
+        return response.badRequest({ message: 'Senha é obrigatória para login normal' });
+      }
+    }
+
     try {
       let user;
       if(user_name.includes('@')){
@@ -51,10 +57,6 @@ export default class AuthController {
       
       // Verifica se a senha está correta
       if (!isGoogleLogin) {
-        if (!password) {
-          return response.badRequest({ message: 'Senha é obrigatória para login normal' });
-        }
-
         // só verifica a senha se NÃO for login Google
         const isPasswordValid = await hash.verify(user.password, password);
         if (!isPasswordValid) {

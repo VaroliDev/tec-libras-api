@@ -9,6 +9,7 @@ router.get('/', async () => {
 router.get('/ping', async () => {
   return { message: 'API está funcionando!' }
 })
+
 //auth_controller routes
 router.post('/user', [AuthController, 'cadastrar'])
 router.post('/login', [AuthController, 'login'])
@@ -22,3 +23,4 @@ router.post('/doesExists', [AuthController, 'doesExists'])
 router.get('/users', [UserController, 'index'])
 router.get('/user/:id', [UserController, 'show']);
 router.get('/user/:id/role', [UserController, 'getRole']);
+router.get('/user/:id/change', [UserController, 'changeRole'])

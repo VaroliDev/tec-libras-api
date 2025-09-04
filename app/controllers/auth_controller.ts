@@ -121,6 +121,7 @@ export default class AuthController {
         id: userData.id,
         user_name: userData.user_name,
         full_name: userData.full_name,
+        email: userData.email,
         token: userToken.hash
       }
     }

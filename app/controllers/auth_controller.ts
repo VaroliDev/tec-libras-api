@@ -22,14 +22,15 @@ export default class AuthController {
       const user = await User.create(data)
       const password = await hash.make('password')
       const token = await User.accessTokens.create(user)
+      const firstLogin = true;
       if(doesExist){
         console.log('Ta caindo na bola')
-        return ({ user, token, password })
+        return ({ user, token, password})
       }
       console.log('Nao ta')
 
       
-      return response.created({ user, token, password })
+      return response.created({ user, token, password, firstLogin })
     }
 
   public async login({ request, auth, response }: HttpContext) {

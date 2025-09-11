@@ -16,20 +16,19 @@ export default class AuthController {
       if (!data.email) {
         return response.status(400).send({ message: 'O email é obrigatório' });
       }
-
+      
+      console.log(data)
       const doesExist = await db.from('users').where('user_name', data.user_name).first()
       console.log(doesExist)
       const user = await User.create(data)
-      const password = await hash.make('password')
-      const token = await User.accessTokens.create(user)
+      const password = await hash.make('password') 
       const firstLogin = true;
       if(doesExist){
         console.log('Ta caindo na bola')
-        return ({ user, token, password})
+        return ({ user, password})
       }
       console.log('Nao ta')
-
-      
+      const token = await User.accessTokens.create(user)
       return response.created({ user, token, password, firstLogin })
     }
 

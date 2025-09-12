@@ -13,6 +13,9 @@ export default class subject extends BaseModel {
   declare title: string
 
   @column()
+  declare subtitle: string
+
+  @column()
   declare description: string | null
 
   @column()

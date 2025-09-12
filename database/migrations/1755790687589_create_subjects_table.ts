@@ -8,6 +8,7 @@ export default class CreateSubjectsTable extends BaseSchema {
       table.increments('id')
       table.integer('level_id').unsigned().notNullable()
       table.string('title', 100).notNullable()
+      table.string('subtitle',).notNullable()
       table.text('description').nullable()
       table.integer('order').notNullable()
       table.integer('required_subject_id').unsigned().nullable()

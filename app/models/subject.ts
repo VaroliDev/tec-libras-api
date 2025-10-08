@@ -16,6 +16,9 @@ export default class subject extends BaseModel {
   declare description: string | null
 
   @column()
+  declare icon: string
+
+  @column()
   declare order: number
 
   @column()

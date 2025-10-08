@@ -11,17 +11,17 @@ export default class UserProgress extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
  
-  @column()
-  declare user_id: number
+ @belongsTo(() => User)
+  declare user_id: BelongsTo<typeof User>
  
-  @column()
-  declare level_id: number
+  @belongsTo(() => Level)
+  declare level_id: BelongsTo<typeof Level>
  
-  @column()
-  declare subject_id: number
+  @belongsTo(() => Subject)
+  declare subject_id: BelongsTo<typeof Subject>
  
-  @column()
-  declare topic_id: number
+  @belongsTo(() => Topic)
+  declare topic_id: BelongsTo<typeof Topic>
  
   @column()
   declare is_completed: boolean
@@ -40,16 +40,4 @@ export default class UserProgress extends BaseModel {
  
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updated_at: DateTime
- 
-  @belongsTo(() => User)
-  declare user: BelongsTo<typeof User>
- 
-  @belongsTo(() => Level)
-  declare level: BelongsTo<typeof Level>
- 
-  @belongsTo(() => Subject)
-  declare subject: BelongsTo<typeof Subject>
- 
-  @belongsTo(() => Topic)
-  declare topic: BelongsTo<typeof Topic>
 }

@@ -6,7 +6,7 @@ export default class CreateUserProgressTable extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('user_id').unsigned().notNullable().references('id').inTable('users').onDelete('CASCADE')
+      table.integer('user_id').unsigned().nullable().references('id').inTable('users').onDelete('CASCADE')
       table.integer('level_id').unsigned().nullable().references('id').inTable('levels').onDelete('CASCADE')
       table.integer('subject_id').unsigned().nullable().references('id').inTable('subjects').onDelete('CASCADE')
       table.integer('topic_id').unsigned().nullable().references('id').inTable('topics').onDelete('CASCADE')

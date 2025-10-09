@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
+import UserProgress from '#models/user_progress'
 
 export default class AuthController {
   public async cadastrar({request, response}: HttpContext) {
@@ -29,7 +30,13 @@ export default class AuthController {
       }
       console.log('Nao ta')
 
-      
+      UserProgress.create({
+        user_id: user.id,
+        is_completed: false,
+        completion_date: null,
+        score: 0,
+        finished_lessons: 0
+      })
       return response.created({ user, token, password, firstLogin })
     }
 

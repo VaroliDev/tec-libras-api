@@ -2,6 +2,7 @@ import router from '@adonisjs/core/services/router'
 
 const UserController = () => import('#controllers/user_controller')
 const AuthController = () => import('#controllers/auth_controller')
+const ProgressController = () => import('#controllers/progress_controller')
 
 router.get('/', async () => {
   return { hello: 'world' }
@@ -24,3 +25,6 @@ router.get('/users', [UserController, 'index'])
 router.get('/user/:id', [UserController, 'show']);
 router.get('/user/:id/role', [UserController, 'getRole']);
 router.get('/user/:id/change', [UserController, 'changeRole'])
+
+//progress_controller routes
+router.post('/progress', [ProgressController, 'createProgress'])

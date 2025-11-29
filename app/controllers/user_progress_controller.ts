@@ -33,14 +33,15 @@ export default class UserProgressController {
         return response.status(201).send({ message: 'Progresso cadastrado com sucesso' });
     }
 
-    public async vizualizarProgresso({request, response}: HttpContext) {
-        const data = request.only(['user_id'])
-        if(!data){
-            return response.status(400).send({ message: 'O ID do usuário é obrigatório' });
+        public async vizualizarProgresso({ request, response }: HttpContext) {
+        const user_id = request.qs().user_id
+
+        if (!user_id) {
+            return response.status(400).send({ message: 'O ID do usuário é obrigatório' })
         }
 
-        const progresso = await db.from('user_progress').where({'user_id': data.user_id })
+        const progresso = await db.from('user_progress').where({ user_id })
 
-        return response.status(200).send({ progresso });
+        return response.status(200).send({ progresso })
     }
 }

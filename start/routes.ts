@@ -28,4 +28,4 @@ router.get('/user/:id/change', [UserController, 'changeRole'])
 
 //user_progress_controller routes
 router.post('/user/progress', [UserProgressController, 'cadastrarProgresso'])
-router.post('/user/progress/view', [UserProgressController, 'vizualizarProgresso'])
+router.get('/user/progress/view/:id', [UserProgressController, 'vizualizarProgresso'])

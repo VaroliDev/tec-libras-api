@@ -18,18 +18,15 @@ export default class AuthController {
       }
 
       const doesExist = await db.from('users').where('user_name', data.user_name).first()
-      console.log(doesExist)
+      
       const user = await User.create(data)
       const password = await hash.make('password')
       const token = await User.accessTokens.create(user)
       const firstLogin = true;
+
       if(doesExist){
-        console.log('Ta caindo na bola')
         return ({ user, token, password})
       }
-      console.log('Nao ta')
-
-      
       return response.created({ user, token, password, firstLogin })
     }
 

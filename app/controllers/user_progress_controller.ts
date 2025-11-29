@@ -29,8 +29,18 @@ export default class UserProgressController {
             return response.status(409).send({ message: 'Progresso já cadastrado para este usuário e tópico' });
         }
         
-        const user = await UserProgress.create(data)
-        console.log(user)
+        await UserProgress.create(data)
         return response.status(201).send({ message: 'Progresso cadastrado com sucesso' });
+    }
+
+    public async vizualizarProgresso({request, response}: HttpContext) {
+        const data = request.only(['user_id'])
+        if(!data){
+            return response.status(400).send({ message: 'O ID do usuário é obrigatório' });
+        }
+
+        const progresso = await db.from('user_progress').where({'user_id': data.user_id })
+
+        return response.status(200).send({ progresso });
     }
 }

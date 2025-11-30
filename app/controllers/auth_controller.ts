@@ -3,6 +3,8 @@ import { nanoid } from 'nanoid'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
+import UserLevelUnlock from '#models/user_level_unlock';
+import { DateTime } from 'luxon';
 
 export default class AuthController {
   public async cadastrar({request, response}: HttpContext) {
@@ -27,6 +29,13 @@ export default class AuthController {
       if(doesExist){
         return ({ user, token, password})
       }
+
+      await UserLevelUnlock.create({
+        user_id: user.id,
+        level_id: 1,
+        unlocked_at: DateTime.now()
+      })
+
       return response.created({ user, token, password, firstLogin })
     }
 

@@ -2,6 +2,8 @@ import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
  
 export default class UserLevelUnlock extends BaseModel {
+  public static table = 'user_level_unlocks'
+
   @column({ isPrimary: true })
   declare id: number
  

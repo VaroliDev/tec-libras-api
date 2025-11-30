@@ -34,13 +34,15 @@ export default class UserProgressController {
     }
 
         public async vizualizarProgresso({ request, response }: HttpContext) {
-        const user_id = request.qs().user_id
-
+        const user_id = request.only(['user_id']).user_id;
+        
         if (!user_id) {
             return response.status(400).send({ message: 'O ID do usuário é obrigatório' })
         }
 
-        const progresso = await db.from('user_progress').where({ user_id })
+        const progresso = await db
+        .from('user_progress')
+        .where({ 'user_id': user_id })
 
         return response.status(200).send({ progresso })
     }

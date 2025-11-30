@@ -60,6 +60,7 @@
     "better-sqlite3": "^11.9.1",
     "luxon": "^3.6.1",
     "nanoid": "^5.1.5",
+    "npm": "^11.6.1",
     "pg": "^8.15.6",
     "reflect-metadata": "^0.2.2",
     "tinker": "^0.0.4"

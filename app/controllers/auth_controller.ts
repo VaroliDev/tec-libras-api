@@ -3,7 +3,8 @@ import { nanoid } from 'nanoid'
 import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
-import UserProgress from '#models/user_progress'
+import UserLevelUnlock from '#models/user_level_unlock';
+import { DateTime } from 'luxon';
 
 export default class AuthController {
   public async cadastrar({request, response}: HttpContext) {
@@ -19,24 +20,22 @@ export default class AuthController {
       }
 
       const doesExist = await db.from('users').where('user_name', data.user_name).first()
-      console.log(doesExist)
+      
       const user = await User.create(data)
       const password = await hash.make('password')
       const token = await User.accessTokens.create(user)
       const firstLogin = true;
+
       if(doesExist){
-        console.log('Ta caindo na bola')
         return ({ user, token, password})
       }
-      console.log('Nao ta')
 
-      UserProgress.create({
+      await UserLevelUnlock.create({
         user_id: user.id,
-        is_completed: false,
-        completion_date: null,
-        score: 0,
-        finished_lessons: 0
+        level_id: 1,
+        unlocked_at: DateTime.now()
       })
+
       return response.created({ user, token, password, firstLogin })
     }
 

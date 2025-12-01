@@ -11,10 +11,10 @@ export default class UserAchievement extends BaseModel {
   declare id: number
 
   @column()
-  declare userId: number
+  declare user_id: number
 
   @column()
-  declare achievementId: number
+  declare title: string
 
   @column.dateTime({ autoCreate: true })
   declare dateAchieved: DateTime

@@ -16,8 +16,8 @@ export default class AchievementsController {
 
             const achievement = await UserAchievement.create(
                 {
-                    userId: data.user_id,
-                    achievementId: data.achievement,
+                    user_id: data.user_id,
+                    title: data.achievement,
                     dateAchieved: date
                 }
             )

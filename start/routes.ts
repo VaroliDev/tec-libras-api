@@ -4,6 +4,7 @@ const UserController = () => import('#controllers/user_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const UserProgressController = () => import('#controllers/user_progress_controller')
 const UserUnlockController = () => import('#controllers/user_unlock_controller')
+const AchievementsController = () => import('#controllers/achievements_controller')
 
 router.get('/', async () => {
   return { hello: 'world' }
@@ -34,3 +35,7 @@ router.post('/user/progress/view', [UserProgressController, 'vizualizarProgresso
 //user_unlock_controller routes
 router.post('/user/level/unlock', [UserUnlockController, 'desbloquearNivel'])
 router.post('/user/level/unlocks', [UserUnlockController, 'visualizarDesbloqueios'])
+
+//achievements_controller routes
+router.post('/user/achievement', [AchievementsController, 'addAchievement'])
+router.get('/user/:id/achievements', [AchievementsController, 'getAchievements'])

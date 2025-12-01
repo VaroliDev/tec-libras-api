@@ -4,6 +4,7 @@ import db from '@adonisjs/lucid/services/db'
 import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import UserLevelUnlock from '#models/user_level_unlock';
+import UserAchievement from '#models/user_achievement';
 import { DateTime } from 'luxon';
 
 export default class AuthController {
@@ -21,20 +22,33 @@ export default class AuthController {
 
       const doesExist = await db.from('users').where('user_name', data.user_name).first()
       
+      if(doesExist){
+        return response.status(400).send({ message: 'Usuário já existe' });
+      }
+
+      // Cria o usuário
       const user = await User.create(data)
       const password = await hash.make('password')
       const token = await User.accessTokens.create(user)
       const firstLogin = true;
 
-      if(doesExist){
-        return ({ user, token, password})
-      }
-
+      // Desbloqueia o nível 1
       await UserLevelUnlock.create({
         user_id: user.id,
         level_id: 1,
         unlocked_at: DateTime.now()
       })
+
+      try {
+          await UserAchievement.create({
+            user_id: user.id,
+            title: "Boas-vindas",
+            dateAchieved: DateTime.now()
+          });
+
+      } catch (error) {
+        console.error('Erro ao adicionar achievement:', error);
+      }
 
       return response.created({ user, token, password, firstLogin })
     }

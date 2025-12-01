@@ -16,12 +16,9 @@ export default class UserAchievementsSchema extends BaseSchema {
         .onDelete('CASCADE')
 
       table
-        .integer('achievement_id')
+        .string('title')
         .unsigned()
         .notNullable()
-        .references('id')
-        .inTable('achievements')
-        .onDelete('CASCADE')
 
       table.timestamp('date_achieved').notNullable().defaultTo(this.now())
     })

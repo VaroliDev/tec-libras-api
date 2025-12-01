@@ -1,0 +1,47 @@
+import type { HttpContext } from '@adonisjs/core/http';
+import UserAchievement from '#models/user_achievement';
+import db from '@adonisjs/lucid/services/db';
+import { DateTime } from 'luxon';
+
+export default class AchievementsController {
+    async addAchievement({ request, response }: HttpContext) {
+        const data = request.only(['user_id', 'achievement']);
+
+        if(!data){
+            return response.badRequest({ messagem: 'Invalid data' });
+        }
+
+        try {
+            const date = DateTime.now()
+
+            const achievement = await UserAchievement.create(
+                {
+                    user_id: data.user_id,
+                    title: data.achievement,
+                    dateAchieved: date
+                }
+            )
+            return response.created(achievement);
+        }
+        catch (error) {
+            return response.internalServerError({ messagem: 'Error creating achievement', error });
+        }
+    }
+
+    async getAchievements({ request, response }: HttpContext) {
+        const user_id = request.param('id');
+        if(!user_id){
+            return response.badRequest({ messagem: 'User ID is required' });
+        }
+
+        const data = await db
+            .from('user_achievements')
+            .where('user_id', user_id)
+
+        if(data.length === 0){
+            return response.notFound({ messagem: 'No achievements found for this user' });
+        }
+
+        return response.ok(data);
+    }
+}

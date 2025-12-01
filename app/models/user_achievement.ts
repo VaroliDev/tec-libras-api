@@ -5,14 +5,16 @@ import User from './user.js'
 import Achievement from './achievement.js'
 
 export default class UserAchievement extends BaseModel {
+  public static table = 'user_achievements'
+
   @column({ isPrimary: true })
   declare id: number
 
   @column()
-  declare userId: number
+  declare user_id: number
 
   @column()
-  declare achievementId: number
+  declare title: string
 
   @column.dateTime({ autoCreate: true })
   declare dateAchieved: DateTime

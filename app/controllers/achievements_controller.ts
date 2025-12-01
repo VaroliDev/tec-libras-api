@@ -16,12 +16,15 @@ export default class AchievementsController {
 
             const achievement = await UserAchievement.create(
                 {
-                    user_id: data.user_id,
-                    achievement: data.achievement,
-                    date: date
+                    userId: data.user_id,
+                    achievementId: data.achievement,
+                    dateAchieved: date
                 }
             )
             return response.created(achievement);
+        }
+        catch (error) {
+            return response.internalServerError({ messagem: 'Error creating achievement', error });
         }
     }
 

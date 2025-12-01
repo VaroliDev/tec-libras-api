@@ -29,14 +29,14 @@ export default class AchievementsController {
     }
 
     async getAchievements({ request, response }: HttpContext) {
-        const userId = request.param('id');
-        if(!userId){
+        const user_id = request.param('id');
+        if(!user_id){
             return response.badRequest({ messagem: 'User ID is required' });
         }
 
         const data = await db
             .from('user_achievements')
-            .where('user_id', userId)
+            .where('user_id', user_id)
 
         if(data.length === 0){
             return response.notFound({ messagem: 'No achievements found for this user' });

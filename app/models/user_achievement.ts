@@ -5,6 +5,8 @@ import User from './user.js'
 import Achievement from './achievement.js'
 
 export default class UserAchievement extends BaseModel {
+  public static table = 'user_achievements'
+
   @column({ isPrimary: true })
   declare id: number
 
